@@ -1,0 +1,3 @@
+ticker,tipo,sector,cantidad,precio_entrada,precio_actual,valor_actual,ganancia_perdida
+AAPL,Acción,Tecnología,10.0,150.0,175.3,1753.0,253.0000000000001
+US10Y,Bono,Gobierno,5.0,100.0,99.8,499.0,-1.0000000000000142
