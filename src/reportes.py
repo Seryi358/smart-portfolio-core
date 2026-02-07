@@ -2,8 +2,8 @@ from dataclasses import asdict
 import csv
 import json
 from typing import Dict
-from .modelos import Posicion
-from .portafolio import Portafolio
+from modelos import Posicion
+from portafolio import Portafolio
 
 
 class ReportadorFinanciero:
