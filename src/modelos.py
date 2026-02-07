@@ -51,7 +51,7 @@ class Posicion:
         """Cantidad de unidades.
 
         El getter retorna el valor almacenado en `_cantidad`. El setter
-        valida que sea un número no negativo【493794840527828†L34-L41】.
+        valida que sea un número no negativo.
         """
         return self._cantidad
 
