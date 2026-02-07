@@ -75,3 +75,15 @@ class Posicion:
         if not isinstance(precio_mercado, (int, float)):
             raise TypeError("precio_mercado debe ser numérico")
         return self.cantidad * precio_mercado
+    def calcular_ganancia_no_realizada(self, precio_actual: float) -> float:
+        """Calcula la ganancia o pérdida no realizada (PnL).
+
+        Args:
+            precio_actual: Precio actual del instrumento.
+
+        Returns:
+            Ganancia o pérdida = (precio_actual - precio_entrada) * cantidad
+        """
+        if not isinstance(precio_actual, (int, float)):
+            raise TypeError("precio_actual debe ser numérico")
+        return (precio_actual - self.precio_entrada) * self.cantidad

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
-from .modelos import Posicion, Instrumento
+from modelos import Posicion, Instrumento
 
 
 @dataclass

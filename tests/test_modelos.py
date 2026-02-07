@@ -1,8 +1,7 @@
 # tests/test_models.py
 import pytest
-from src.modelos import Posicion
-from tests.conftest import instrumento_test
-from tests.conftest import portafolio_vacio
+from modelos import Posicion
+
 
 @pytest.mark.parametrize(
     "precio_entrada, precio_actual, cantidad, esperado",
@@ -11,15 +10,13 @@ from tests.conftest import portafolio_vacio
         (200, 180, 5, -100),
         (50, 50, 7, 0),
     ],
-
-
 )
 def test_calculo_pnl(
     precio_entrada,
     precio_actual,
     cantidad,
     esperado,
-    instrumento_test,
+    instrumento_test,  # viene automáticamente de conftest.py
 ):
     posicion = Posicion(
         instrumento=instrumento_test,
