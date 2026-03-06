@@ -206,3 +206,12 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 __pycache__/
+
+# macOS
+.DS_Store
+
+# Generated output files
+resumen_portafolio.html
+resumen_portafolio.csv
+resumen_portafolio.json
+oracle_*.json
