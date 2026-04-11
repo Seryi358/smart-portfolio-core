@@ -1,0 +1,22 @@
+[
+    {
+        "ticker": "AAPL",
+        "tipo": "Acci\u00f3n",
+        "sector": "Tecnolog\u00eda",
+        "cantidad": 10.0,
+        "precio_entrada": 150.0,
+        "precio_actual": 175.3,
+        "valor_actual": 1753.0,
+        "ganancia_perdida": 253.0000000000001
+    },
+    {
+        "ticker": "US10Y",
+        "tipo": "Bono",
+        "sector": "Gobierno",
+        "cantidad": 5.0,
+        "precio_entrada": 100.0,
+        "precio_actual": 99.8,
+        "valor_actual": 499.0,
+        "ganancia_perdida": -1.0000000000000142
+    }
+]
