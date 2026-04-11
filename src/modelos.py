@@ -87,3 +87,19 @@ class Posicion:
         if not isinstance(precio_actual, (int, float)):
             raise TypeError("precio_actual debe ser numérico")
         return (precio_actual - self.precio_entrada) * self.cantidad
+
+    def tiene_alerta_perdida(self, precio_actual: float, umbral: float = 0.10) -> bool:
+        """Indica si la pérdida no realizada supera el umbral porcentual.
+
+        Args:
+            precio_actual: Precio actual del instrumento.
+            umbral: Porcentaje máximo de pérdida permitido (default 0.10 = 10%).
+
+        Returns:
+            True si la pérdida es mayor al umbral, False en caso contrario.
+        """
+        pnl = self.calcular_ganancia_no_realizada(precio_actual)
+        costo_base = self.precio_entrada * self.cantidad
+        if costo_base == 0:
+            return False
+        return (pnl / costo_base) < -umbral

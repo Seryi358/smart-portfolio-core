@@ -93,3 +93,31 @@ def test_instrumento_inmutabilidad(instrumento_test):
     with pytest.raises(FrozenInstanceError):
         instrumento_test.ticker = "NEW"
 
+
+def test_portafolio_remover_posicion_exitoso(portafolio_vacio, instrumento_test):
+    """Prueba que remover_posicion elimina correctamente una posición existente."""
+    pos = Posicion(instrumento=instrumento_test, _cantidad=5, precio_entrada=100.0)
+    portafolio_vacio.agregar_posicion(pos)
+    assert len(portafolio_vacio.posiciones) == 1
+    portafolio_vacio.remover_posicion(ticker="TSLA")
+    assert len(portafolio_vacio.posiciones) == 0
+
+
+def test_portafolio_valor_total_ticker_faltante(portafolio_vacio, instrumento_test):
+    """Prueba que valor_total lanza ValueError si falta un precio de mercado."""
+    pos = Posicion(instrumento=instrumento_test, _cantidad=5, precio_entrada=100.0)
+    portafolio_vacio.agregar_posicion(pos)
+    with pytest.raises(ValueError):
+        portafolio_vacio.valor_total({})
+
+
+def test_portafolio_posiciones_por_ticker(portafolio_vacio, instrumento_test):
+    """Prueba que posiciones_por_ticker agrupa correctamente por símbolo."""
+    pos1 = Posicion(instrumento=instrumento_test, _cantidad=5, precio_entrada=100.0)
+    pos2 = Posicion(instrumento=instrumento_test, _cantidad=3, precio_entrada=120.0)
+    portafolio_vacio.agregar_posicion(pos1)
+    portafolio_vacio.agregar_posicion(pos2)
+    agrupadas = portafolio_vacio.posiciones_por_ticker()
+    assert "TSLA" in agrupadas
+    assert len(agrupadas["TSLA"]) == 2
+
