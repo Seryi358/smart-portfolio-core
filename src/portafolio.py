@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
-from .modelos import Posicion, Instrumento
+from modelos import Posicion, Instrumento
+
+class PosicionNoExisteError(Exception):
+    """Error lanzado cuando se intenta acceder a una posición que no existe."""
+    pass
 
 
 @dataclass
@@ -17,6 +21,21 @@ class Portafolio:
         if not isinstance(posicion, Posicion):
             raise TypeError("solo se pueden agregar objetos Posicion")
         self.posiciones.append(posicion)
+
+    def remover_posicion(self, ticker: str) -> None:
+        """Elimina una posición del portafolio por su ticker.
+
+        Args:
+            ticker: Símbolo del instrumento a eliminar.
+
+        Raises:
+            PosicionNoExisteError: Si el ticker no está en el portafolio.
+        """
+        for i, pos in enumerate(self.posiciones):
+            if pos.instrumento.ticker == ticker:
+                del self.posiciones[i]
+                return
+        raise PosicionNoExisteError(f"No existe posición con ticker {ticker}")
 
     def valor_total(self, precios_mercado: Dict[str, float]) -> float:
         """Calcula el valor total del portafolio.

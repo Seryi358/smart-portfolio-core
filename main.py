@@ -1,6 +1,12 @@
-from src.modelos import Instrumento, Posicion
-from src.portafolio import Portafolio
-from src.reportes import ReportadorFinanciero
+import sys
+from pathlib import Path
+
+# Agregar src al path
+sys.path.append(str(Path(__file__).resolve().parent / "src"))
+
+from modelos import Instrumento, Posicion
+from portafolio import Portafolio
+from reportes import ReportadorFinanciero
 
 def main() -> None:
     # 1. Definir activos
