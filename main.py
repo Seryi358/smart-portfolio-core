@@ -31,6 +31,8 @@ def main() -> None:
     # Exportar a CSV y JSON
     reportador.exportar_csv(fondo, precios, "resumen_portafolio.csv")
     reportador.exportar_json(fondo, precios, "resumen_portafolio.json")
+
+    # Exportar HTML con gráficas (sin datos OHLCV reales en este ejemplo)
     reportador.exportar_html(fondo, precios, "resumen_portafolio.html")
     print("Reportes generados: CSV, JSON y HTML.")
 
