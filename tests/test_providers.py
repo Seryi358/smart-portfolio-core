@@ -76,29 +76,29 @@ def test_oracle_tendencia_neutral():
 
 def test_alerta_perdida_activa(instrumento_test):
     """Pérdida > 10% debe activar alerta."""
-    pos = Posicion(instrumento=instrumento_test, _cantidad=10, precio_entrada=100.0)
+    pos = Posicion(instrumento=instrumento_test, cantidad=10, precio_entrada=100.0)
     assert pos.tiene_alerta_perdida(85.0) is True   # -15%
 
 
 def test_alerta_perdida_inactiva(instrumento_test):
     """Pérdida < 10% no activa alerta."""
-    pos = Posicion(instrumento=instrumento_test, _cantidad=10, precio_entrada=100.0)
+    pos = Posicion(instrumento=instrumento_test, cantidad=10, precio_entrada=100.0)
     assert pos.tiene_alerta_perdida(95.0) is False  # -5%
 
 
 def test_alerta_perdida_exactamente_umbral(instrumento_test):
     """Pérdida exactamente en el umbral no activa alerta (condición estricta)."""
-    pos = Posicion(instrumento=instrumento_test, _cantidad=10, precio_entrada=100.0)
+    pos = Posicion(instrumento=instrumento_test, cantidad=10, precio_entrada=100.0)
     assert pos.tiene_alerta_perdida(90.0) is False  # -10% exacto
 
 
 def test_alerta_perdida_con_ganancia(instrumento_test):
     """Posición con ganancia nunca activa alerta."""
-    pos = Posicion(instrumento=instrumento_test, _cantidad=10, precio_entrada=100.0)
+    pos = Posicion(instrumento=instrumento_test, cantidad=10, precio_entrada=100.0)
     assert pos.tiene_alerta_perdida(110.0) is False  # +10%
 
 
 def test_alerta_perdida_cantidad_cero(instrumento_test):
     """Posición con cantidad 0 (costo_base = 0) retorna False sin dividir por cero."""
-    pos = Posicion(instrumento=instrumento_test, _cantidad=0, precio_entrada=100.0)
+    pos = Posicion(instrumento=instrumento_test, cantidad=0, precio_entrada=100.0)
     assert pos.tiene_alerta_perdida(50.0) is False

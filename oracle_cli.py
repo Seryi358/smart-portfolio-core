@@ -110,7 +110,7 @@ def main() -> None:
         instrumento = Instrumento(ticker=ticker, tipo=tipo, sector=sector)
         pos = Posicion(
             instrumento=instrumento,
-            _cantidad=cantidad,
+            cantidad=cantidad,
             precio_entrada=precio_entrada,
         )
 
@@ -155,7 +155,7 @@ def main() -> None:
         # Generar reporte solo con gráficas de mercado (sin posiciones)
         ruta_html = f"oracle_{ticker.lower()}_reporte.html"
         instrumento = Instrumento(ticker=ticker, tipo=tipo, sector=sector)
-        pos_temp = Posicion(instrumento=instrumento, _cantidad=1, precio_entrada=precio_actual)
+        pos_temp = Posicion(instrumento=instrumento, cantidad=1, precio_entrada=precio_actual)
         portafolio.agregar_posicion(pos_temp)
         reportador = ReportadorFinanciero()
         reportador.exportar_html(

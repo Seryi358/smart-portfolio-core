@@ -1,105 +1,116 @@
-from dataclasses import dataclass, field
-from typing import List
+"""modelos.py — Modelos de dominio: Instrumento y Posicion.
+
+Define los objetos inmutables/mutables que representan los activos y
+posiciones de un portafolio financiero, con validaciones defensivas.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Union
+
+Numero = Union[int, float]
+
 
 @dataclass(frozen=True)
 class Instrumento:
-    """Representa un activo financiero, inmutable.
+    """Representa un activo financiero de forma inmutable.
 
     Args:
         ticker: Sigla del instrumento (ej. "AAPL", "US10Y").
         tipo: Tipo de instrumento ("Acción", "Bono", etc.).
         sector: Sector económico ("Tecnología", "Gobierno", etc.).
     """
+
     ticker: str
     tipo: str
     sector: str
 
-    # No hay métodos adicionales. Por ser "frozen", no se pueden
-    # modificar los atributos después de la creación. Python arrojará
-    # dataclasses.FrozenInstanceError si intenta reasignar un campo.
 
-
-@dataclass
 class Posicion:
     """Representa una posición en un instrumento financiero.
 
     Args:
-        instrumento: Instancia de `Instrumento` asociada a la posición.
-        cantidad: Número de unidades compradas. Debe ser positivo.
+        instrumento: Instancia de :class:`Instrumento` asociada a la posición.
+        cantidad: Número de unidades compradas. Debe ser no negativo.
         precio_entrada: Precio al que se adquirió la posición.
+
+    Raises:
+        TypeError: Si alguno de los argumentos no cumple el tipo esperado.
+        ValueError: Si ``cantidad`` es negativa.
     """
-    instrumento: Instrumento
-    _cantidad: float  # atributo interno (prefijo _) para controlarlo vía property
-    precio_entrada: float
 
-    def __post_init__(self) -> None:
-        """Valida los atributos después de inicializar la instancia.
-
-        - Verifica que `instrumento` sea una instancia de Instrumento.
-        - Controla que `cantidad` sea numérica y no negativa.
-        - Controla que `precio_entrada` sea numérico.
-        """
-        if not isinstance(self.instrumento, Instrumento):
+    def __init__(
+        self,
+        instrumento: Instrumento,
+        cantidad: Numero,
+        precio_entrada: Numero,
+    ) -> None:
+        if not isinstance(instrumento, Instrumento):
             raise TypeError("instrumento debe ser de tipo Instrumento")
-        # Usa el setter de cantidad para validar el valor inicial
-        self.cantidad = self._cantidad
-        if not isinstance(self.precio_entrada, (int, float)):
+        if isinstance(precio_entrada, bool) or not isinstance(precio_entrada, (int, float)):
             raise TypeError("precio_entrada debe ser numérico")
+        self.instrumento = instrumento
+        self.precio_entrada = float(precio_entrada)
+        # Usa el setter para validar el valor inicial
+        self.cantidad = cantidad
 
     @property
     def cantidad(self) -> float:
-        """Cantidad de unidades.
-
-        El getter retorna el valor almacenado en `_cantidad`. El setter
-        valida que sea un número no negativo.
-        """
+        """Cantidad de unidades de la posición."""
         return self._cantidad
 
     @cantidad.setter
-    def cantidad(self, value: float) -> None:
-        if not isinstance(value, (int, float)):
+    def cantidad(self, value: Numero) -> None:
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise TypeError("cantidad debe ser numérica")
         if value < 0:
             raise ValueError("cantidad no puede ser negativa")
         self._cantidad = float(value)
 
-    def calcular_valor_actual(self, precio_mercado: float) -> float:
+    def calcular_valor_actual(self, precio_mercado: Numero) -> float:
         """Calcula el valor actual de la posición.
 
         Args:
             precio_mercado: Precio actual del instrumento.
 
         Returns:
-            Valor de la posición = cantidad * precio_mercado.
+            Valor de la posición = cantidad × precio_mercado.
         """
-        if not isinstance(precio_mercado, (int, float)):
+        if isinstance(precio_mercado, bool) or not isinstance(precio_mercado, (int, float)):
             raise TypeError("precio_mercado debe ser numérico")
-        return self.cantidad * precio_mercado
-    def calcular_ganancia_no_realizada(self, precio_actual: float) -> float:
+        return self._cantidad * float(precio_mercado)
+
+    def calcular_ganancia_no_realizada(self, precio_actual: Numero) -> float:
         """Calcula la ganancia o pérdida no realizada (PnL).
 
         Args:
             precio_actual: Precio actual del instrumento.
 
         Returns:
-            Ganancia o pérdida = (precio_actual - precio_entrada) * cantidad
+            (precio_actual − precio_entrada) × cantidad.
         """
-        if not isinstance(precio_actual, (int, float)):
+        if isinstance(precio_actual, bool) or not isinstance(precio_actual, (int, float)):
             raise TypeError("precio_actual debe ser numérico")
-        return (precio_actual - self.precio_entrada) * self.cantidad
+        return (float(precio_actual) - self.precio_entrada) * self._cantidad
 
-    def tiene_alerta_perdida(self, precio_actual: float, umbral: float = 0.10) -> bool:
+    def tiene_alerta_perdida(self, precio_actual: Numero, umbral: float = 0.10) -> bool:
         """Indica si la pérdida no realizada supera el umbral porcentual.
 
         Args:
             precio_actual: Precio actual del instrumento.
-            umbral: Porcentaje máximo de pérdida permitido (default 0.10 = 10%).
+            umbral: Porcentaje máximo de pérdida permitido (por defecto 10%).
 
         Returns:
-            True si la pérdida es mayor al umbral, False en caso contrario.
+            True si la pérdida porcentual es mayor que ``umbral``.
         """
         pnl = self.calcular_ganancia_no_realizada(precio_actual)
-        costo_base = self.precio_entrada * self.cantidad
+        costo_base = self.precio_entrada * self._cantidad
         if costo_base == 0:
             return False
         return (pnl / costo_base) < -umbral
+
+    def __repr__(self) -> str:
+        return (
+            f"Posicion(instrumento={self.instrumento!r}, "
+            f"cantidad={self._cantidad}, precio_entrada={self.precio_entrada})"
+        )

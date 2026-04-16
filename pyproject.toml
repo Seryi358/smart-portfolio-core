@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "smart-portfolio-core"
 version = "0.1.0"
-description = "Sistema de gestión de portafolio financiero para el seminario de programación"
-authors = ["Sergio Alejandro Castellanos <sergio@example.com>", "José Roberto Ospina Ospina <jose@example.com>"]
+description = "Sistema de gestión y análisis de portafolio financiero — Seminario de Programación, Business Intelligence (Universidad Externado)"
+authors = [
+    "Sergio Alejandro Castellanos <scastellanos@phinodia.com>",
+    "José Roberto Ospina Ospina <joseospina791011@gmail.com>",
+]
 readme = "README.md"
 packages = [{include = "src"}]
 
@@ -24,3 +27,7 @@ python-dotenv = ">=1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
