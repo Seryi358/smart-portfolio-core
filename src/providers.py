@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 
 class MarketDataProvider(ABC):
@@ -30,6 +30,19 @@ class MarketDataProvider(ABC):
 
         Returns:
             Lista de precios de cierre ordenados cronológicamente.
+        """
+        ...
+
+    @abstractmethod
+    def obtener_ohlcv(self, ticker: str, periodo: str = "1y") -> Dict[str, list]:
+        """Retorna datos OHLCV (Open, High, Low, Close, Volume) para velas japonesas.
+
+        Args:
+            ticker: Símbolo del instrumento.
+            periodo: Periodo de datos ("1mo", "3mo", "6mo", "1y").
+
+        Returns:
+            Diccionario con listas: dates, open, high, low, close, volume.
         """
         ...
 
@@ -74,6 +87,29 @@ class YahooFinanceClient(MarketDataProvider):
             raise ValueError(f"Sin historial disponible para '{ticker}'")
         return historial["Close"].tolist()
 
+    def obtener_ohlcv(self, ticker: str, periodo: str = "1y") -> Dict[str, list]:
+        """Obtiene datos OHLCV desde Yahoo Finance.
+
+        Args:
+            ticker: Símbolo del instrumento.
+            periodo: Periodo de datos ("1mo", "3mo", "6mo", "1y").
+
+        Returns:
+            Diccionario con listas: dates, open, high, low, close, volume.
+        """
+        import yfinance as yf
+        historial = yf.Ticker(ticker).history(period=periodo)
+        if historial.empty:
+            raise ValueError(f"Sin historial OHLCV disponible para '{ticker}'")
+        return {
+            "dates": [d.strftime("%Y-%m-%d") for d in historial.index],
+            "open": historial["Open"].tolist(),
+            "high": historial["High"].tolist(),
+            "low": historial["Low"].tolist(),
+            "close": historial["Close"].tolist(),
+            "volume": historial["Volume"].tolist(),
+        }
+
 
 class MockMarketDataProvider(MarketDataProvider):
     """Proveedor de datos simulado para pruebas unitarias.
@@ -109,3 +145,16 @@ class MockMarketDataProvider(MarketDataProvider):
             return list(self._historias[ticker])
         precio = self._precios.get(ticker, 100.0)
         return [float(precio)] * 252
+
+    def obtener_ohlcv(self, ticker: str, periodo: str = "1y") -> Dict[str, list]:
+        """Retorna datos OHLCV simulados para pruebas."""
+        precio = self._precios.get(ticker, 100.0)
+        n = 252
+        return {
+            "dates": [f"2025-01-{i+1:02d}" for i in range(min(n, 28))],
+            "open": [precio * 0.99] * min(n, 28),
+            "high": [precio * 1.01] * min(n, 28),
+            "low": [precio * 0.98] * min(n, 28),
+            "close": [precio] * min(n, 28),
+            "volume": [1000000] * min(n, 28),
+        }
